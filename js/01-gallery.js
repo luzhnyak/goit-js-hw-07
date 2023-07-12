@@ -20,9 +20,14 @@ const galleryMarkup = galleryItems
 
 galleryEl.innerHTML = galleryMarkup;
 
-const instance = basicLightbox.create(`
-    <img src="" width="800" height="600">
-`);
+const instance = basicLightbox.create(`<img src="" width="800" height="600">`, {
+  onShow: () => {
+    document.addEventListener("keydown", onEscDown);
+  },
+  onClose: () => {
+    document.removeEventListener("keydown", onEscDown);
+  },
+});
 
 function onImageClick(event) {
   event.preventDefault();
@@ -30,16 +35,15 @@ function onImageClick(event) {
     return;
   }
 
-  const elem = instance.element().querySelector("img");
-  elem.src = event.target.dataset.source;
+  instance.element().querySelector("img").src = event.target.dataset.source;
 
   instance.show();
 }
 
 galleryEl.addEventListener("click", onImageClick);
 
-document.addEventListener("keydown", (event) => {
+function onEscDown(event) {
   if (event.code === "Escape") {
     instance.close();
   }
-});
+}
